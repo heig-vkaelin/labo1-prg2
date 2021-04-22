@@ -1,6 +1,6 @@
 /*
  -----------------------------------------------------------------------------------
- Nom du fichier : main.c
+ Nom du fichier : listes_dynamiques.c
  Auteur(s)      : Jonathan Friedli, Valentin Kaelin, Lazar Pavicevic
  Date creation  : 22.04.2021
 
@@ -12,11 +12,5 @@
  -----------------------------------------------------------------------------------
 */
 
-#include <stdio.h>
-#include <stdlib.h>
 #include "listes_dynamiques.h"
 
-int main(void) {
-	printf("Hello, World!\n");
-	return EXIT_SUCCESS;
-}
