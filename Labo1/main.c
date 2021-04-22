@@ -133,7 +133,8 @@ int main(void) {
 	testListesEgales(liste1, liste2);
 	remplirListeIncrementale(liste2, 0, 5);
 	testListesEgales(liste1, liste2);
-	remplirListeIncrementale(liste2, 5, 2);
+	vider(liste2, 0);
+	remplirListeIncrementale(liste2, 2, 5);
 	testListesEgales(liste1, liste2);
 
 	return EXIT_SUCCESS;
