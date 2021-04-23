@@ -8,7 +8,10 @@
                   permettant la gestion de listes doublement chaînées non
                   circulaires.
 
- Remarque(s)    : -
+ Remarque(s)    : Les tests des fonctions de la librairie ont été séparés en
+                  plusieurs étapes. Les tests contenant des asserts sont considérés
+                  valides lorsque "=> TEST PASS" est affiché. Ceux qui n'ont pas
+                  ce message ont une indication qu'ils ne contiennent pas d'assert.
 
  Compilateur    : Mingw-w64 gcc 8.1.0
  -----------------------------------------------------------------------------------
@@ -221,7 +224,7 @@ int main(void) {
 	}
 
 	// 10. Suppression selon critères
-	printf("\n9. Suppression selon criteres (Pas d'assert)\n");
+	printf("\n10. Suppression selon criteres (Pas d'assert)\n");
 	Liste* liste8 = initialiser();
 	if (liste8) {
 		remplirListeIncrementale(liste8, 0, 15);
@@ -234,6 +237,31 @@ int main(void) {
 		printf(" => ");
 		afficher(liste8, FORWARD);
 
+	}
+
+	// 11. Calcul de la longueur
+	printf("\n\n11. Calcul de la longueur\n");
+	Liste* liste9= initialiser();
+	if (liste9) {
+
+		// TODO : Régler les flags avec %zu
+
+		// Longueur de liste vide
+		assert(longueur(liste9) == 0);
+
+		printf("Longueur de liste vide\n");
+		afficher(liste9, FORWARD);
+		printf(" => Taille: %zu\n", longueur(liste9));
+
+		// Longueur de liste remplie
+		remplirListeIncrementale(liste9, 1, 4);
+		assert(longueur(liste9) == 4);
+
+		printf("Longueur de liste remplie\n");
+		afficher(liste9, FORWARD);
+		printf(" => Taille: %zu", longueur(liste9));
+
+		printf("\n=> Test PASS\n");
 	}
 
 	return EXIT_SUCCESS;
