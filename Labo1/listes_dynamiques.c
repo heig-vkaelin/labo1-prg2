@@ -4,9 +4,14 @@
  Auteur(s)      : Jonathan Friedli, Valentin Kaelin, Lazar Pavicevic
  Date creation  : 22.04.2021
 
- Description    : -
+ Description    : Implémentation de la librairie permettant la gestion de listes
+                  doublement chaînées non circulaires.
 
- Remarque(s)    : -
+ Remarque(s)    : Utilisation de calloc à la place de malloc pour que les champs
+                  des structures soient automatiquement initialisés à NULL.
+                  La vérification de la bonne initialisation de la liste est à la
+                  charge du développeur. Un pointeur NULL est renvoyé en cas
+                  d'erreur lors de l'allocation mémoire.
 
  Compilateur    : Mingw-w64 gcc 8.1.0
  -----------------------------------------------------------------------------------
@@ -16,27 +21,14 @@
 #include <stdlib.h>
 #include "listes_dynamiques.h"
 
-Liste *initialiser() {
-	Liste *liste = (Liste *) calloc(1, sizeof(Liste));
-	return liste;
-}
-
-bool estVide(const Liste *liste) {
-	return liste->tete == NULL && liste->queue == NULL;
-}
-
-size_t longueur(const Liste *liste) {
-	size_t longueur = 0;
-	Element *temp = liste->tete;
-	while (temp) {
-		++longueur;
-		temp = temp->suivant;
-	}
-	return longueur;
-}
-
-Element *creerElement(const Info *info) {
-	Element *nouvelElement = (Element *) calloc(1, sizeof(Element));
+/**
+ * Crée un nouvel Element et retourne un pointeur sur celui-ci.
+ * Utilisée dans les fonctions permettant d'insérer un nouvel élément à la liste.
+ * @param info : valeur de l'élément à créer
+ * @return un pointeur sur l'Element créé
+ */
+Element* creerElement(const Info* info) {
+	Element* nouvelElement = (Element*) calloc(1, sizeof(Element));
 	if (nouvelElement) {
 		nouvelElement->info = *info;
 	}
@@ -44,69 +36,74 @@ Element *creerElement(const Info *info) {
 	return nouvelElement;
 }
 
-Status insererEnTete(Liste *liste, const Info *info) {
-	Element *nouvelElement = creerElement(info);
-	if (!nouvelElement) {
-		return MEMOIRE_INSUFFISANTE;
-	}
-
-	if (estVide(liste)) {
-		liste->tete = nouvelElement;
-		liste->queue = nouvelElement;
-		return OK;
-	}
-
-	liste->tete->precedent = nouvelElement;
-	nouvelElement->suivant = liste->tete;
-	liste->tete = nouvelElement;
-
-	return OK;
+Liste* initialiser() {
+	return (Liste*) calloc(1, sizeof(Liste));
 }
 
-Status insererEnQueue(Liste *liste, const Info *info) {
-	Element *nouvelElement = creerElement(info);
-	if (!nouvelElement) {
-		return MEMOIRE_INSUFFISANTE;
-	}
-
-	if (estVide(liste)) {
-		liste->tete = nouvelElement;
-		liste->queue = nouvelElement;
-		return OK;
-	}
-
-	liste->queue->suivant = nouvelElement;
-	nouvelElement->precedent = liste->queue;
-	liste->queue = nouvelElement;
-
-	return OK;
+bool estVide(const Liste* liste) {
+	return liste->tete == NULL && liste->queue == NULL;
 }
 
-void afficher(const Liste *liste, Mode mode) {
-	// TODO: refactor avec une fonction prenant une fonction en params
+size_t longueur(const Liste* liste) {
+	size_t longueur = 0;
+	Element* temp = liste->tete;
+	while (temp) {
+		++longueur;
+		temp = temp->suivant;
+	}
+	return longueur;
+}
+
+void afficher(const Liste* liste, Mode mode) {
 	printf("[");
-	Element *temp;
-	if (mode == FORWARD) {
-		temp = liste->tete;
-		while (temp) {
-			printf("%d", temp->info);
-			if ((temp = temp->suivant)) {
-				printf(", ");
-			}
-		}
-	} else {
-		temp = liste->queue;
-		while (temp) {
-			printf("%d", temp->info);
-			if ((temp = temp->precedent)) {
-				printf(", ");
-			}
+	Element* temp = NULL;
+	temp = (mode == FORWARD ? liste->tete : liste->queue);
+	while (temp) {
+		printf("%d", temp->info);
+		if ((temp = (mode == FORWARD ? temp->suivant : temp->precedent))) {
+			printf(", ");
 		}
 	}
 	printf("]");
 }
 
-Status supprimerEnTete(Liste *liste, Info *info) {
+Status insererEnTete(Liste* liste, const Info* info) {
+	Element* nouvelElement = creerElement(info);
+	if (!nouvelElement) {
+		return MEMOIRE_INSUFFISANTE;
+	}
+
+	if (estVide(liste)) {
+		liste->tete = nouvelElement;
+		liste->queue = nouvelElement;
+	} else {
+		liste->tete->precedent = nouvelElement;
+		nouvelElement->suivant = liste->tete;
+		liste->tete = nouvelElement;
+	}
+
+	return OK;
+}
+
+Status insererEnQueue(Liste* liste, const Info* info) {
+	Element* nouvelElement = creerElement(info);
+	if (!nouvelElement) {
+		return MEMOIRE_INSUFFISANTE;
+	}
+
+	if (estVide(liste)) {
+		liste->tete = nouvelElement;
+		liste->queue = nouvelElement;
+	} else {
+		liste->queue->suivant = nouvelElement;
+		nouvelElement->precedent = liste->queue;
+		liste->queue = nouvelElement;
+	}
+
+	return OK;
+}
+
+Status supprimerEnTete(Liste* liste, Info* info) {
 	if (estVide(liste)) {
 		return LISTE_VIDE;
 	}
@@ -126,7 +123,7 @@ Status supprimerEnTete(Liste *liste, Info *info) {
 	return OK;
 }
 
-Status supprimerEnQueue(Liste *liste, Info *info) {
+Status supprimerEnQueue(Liste* liste, Info* info) {
 	if (estVide(liste)) {
 		return LISTE_VIDE;
 	}
@@ -146,45 +143,42 @@ Status supprimerEnQueue(Liste *liste, Info *info) {
 	return OK;
 }
 
-void supprimerSelonCritere(Liste *liste,
-									bool (*critere)(size_t position, const Info *info)) {
+void supprimerSelonCritere(Liste* liste, bool (* critere)(size_t, const Info*)) {
 	if (estVide(liste)) {
 		return;
 	}
 
-	size_t nbElements = longueur(liste);
-	Element *element = liste->tete;
+	size_t pos = 0;
+	Element* element = liste->tete;
 
-	for (size_t pos = 0; pos < nbElements; ++pos) {
+	while (element) {
+		Element* tempSuivant = element->suivant;
 		if (critere(pos, &element->info)) {
-			if (element == liste->tete) {
-				supprimerEnTete(liste, &liste->tete->info);
-				element = liste->tete;
-			} else if (element == liste->queue) {
-				supprimerEnQueue(liste, &liste->queue->info);
-				break;
-			} else {
-				Element *elementSuivant = element->suivant;
-				element->suivant->precedent = element->precedent;
+			if (element->precedent) {
 				element->precedent->suivant = element->suivant;
-				free(element);
-				element = NULL;
-				element = elementSuivant;
+			} else {
+				liste->tete = element->suivant;
 			}
-		} else {
-			element = element->suivant;
+
+			if (element->suivant) {
+				element->suivant->precedent = element->precedent;
+			} else {
+				liste->queue = element->precedent;
+			}
+			free(element);
 		}
+		++pos;
+		element = tempSuivant;
 	}
 }
 
-void vider(Liste *liste, size_t position) {
-	Info temp = 0;
+void vider(Liste* liste, size_t position) {
 	for (size_t nbElements = longueur(liste); nbElements > position; --nbElements) {
-		supprimerEnQueue(liste, &temp);
+		supprimerEnQueue(liste, &liste->queue->info);
 	}
 }
 
-bool sontEgales(const Liste *liste1, const Liste *liste2) {
+bool sontEgales(const Liste* liste1, const Liste* liste2) {
 	size_t longueur1 = longueur(liste1);
 	size_t longueur2 = longueur(liste2);
 
@@ -192,14 +186,14 @@ bool sontEgales(const Liste *liste1, const Liste *liste2) {
 		return false;
 	}
 
-	Element *tmp1 = liste1->tete;
-	Element *tmp2 = liste2->tete;
+	Element* temp1 = liste1->tete;
+	Element* temp2 = liste2->tete;
 	for (size_t i = 0; i < longueur1; ++i) {
-		if (tmp1->info != tmp2->info) {
+		if (temp1->info != temp2->info) {
 			return false;
 		}
-		tmp1 = tmp1->suivant;
-		tmp2 = tmp2->suivant;
+		temp1 = temp1->suivant;
+		temp2 = temp2->suivant;
 	}
 
 	return true;

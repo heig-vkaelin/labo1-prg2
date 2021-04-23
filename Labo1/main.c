@@ -4,7 +4,9 @@
  Auteur(s)      : Jonathan Friedli, Valentin Kaelin, Lazar Pavicevic
  Date creation  : 22.04.2021
 
- Description    : -
+ Description    : Programme principal testant l'implémentation de la librairie
+                  permettant la gestion de listes doublement chaînées non
+                  circulaires.
 
  Remarque(s)    : -
 
@@ -18,22 +20,18 @@
 
 // Exemple: on souhaite supprimer de la liste tous les éléments dont la position est
 // impaire et pour lesquels info est compris dans un certain intervalle de valeurs
-bool positionImpaire(size_t position, const Info *info) {
-	return position % 2 != 0;
+bool positionEtInfoImpaires(size_t position, const Info* info) {
+	return position % 2 != 0 && *info % 2 != 0;
 }
 
-bool infoImpaire(size_t position, const Info *info) {
-	return *info % 2 != 0;
-}
+void remplirListeIncrementale(Liste* liste, Info valeurMinimale, size_t nbValeurs);
 
-void remplirListeIncrementale(Liste *liste, Info valeurMinimale, size_t nbValeurs);
-
-void testListesEgales(const Liste *liste1, const Liste *liste2);
+void testListesEgales(const Liste* liste1, const Liste* liste2);
 
 int main(void) {
 	// 1. Initialiser
-	Liste *liste1 = initialiser();
-	Liste *liste2 = initialiser();
+	Liste* liste1 = initialiser();
+	Liste* liste2 = initialiser();
 
 	// 2. Ajouter des éléments à la tête
 	const Info INFO_1 = 1;
@@ -105,7 +103,7 @@ int main(void) {
 	remplirListeIncrementale(liste1, 0, 15);
 	afficher(liste1, FORWARD);
 	printf("\n");
-	supprimerSelonCritere(liste1, positionImpaire);
+	supprimerSelonCritere(liste1, positionEtInfoImpaires);
 	afficher(liste1, FORWARD);
 	printf("\n");
 
@@ -113,16 +111,16 @@ int main(void) {
 	vider(liste1, 0);
 	afficher(liste1, FORWARD);
 	printf("\n");
-	supprimerSelonCritere(liste1, positionImpaire);
+	supprimerSelonCritere(liste1, positionEtInfoImpaires);
 	afficher(liste1, FORWARD);
 	printf("\n\n");
 
 	// Liste d'un élément
 	vider(liste1, 0);
-	remplirListeIncrementale(liste1, 1, 1);
+	remplirListeIncrementale(liste1, 1, 2);
 	afficher(liste1, FORWARD);
 	printf("\n");
-	supprimerSelonCritere(liste1, infoImpaire);
+	supprimerSelonCritere(liste1, positionEtInfoImpaires);
 	afficher(liste1, FORWARD);
 	printf("\n\n");
 
@@ -140,7 +138,7 @@ int main(void) {
 	return EXIT_SUCCESS;
 }
 
-void remplirListeIncrementale(Liste *liste, Info valeurMinimale, size_t nbValeurs) {
+void remplirListeIncrementale(Liste* liste, Info valeurMinimale, size_t nbValeurs) {
 	Info valeur = valeurMinimale;
 	for (size_t i = 0; i < nbValeurs; ++i) {
 		insererEnQueue(liste, &valeur);
@@ -148,7 +146,7 @@ void remplirListeIncrementale(Liste *liste, Info valeurMinimale, size_t nbValeur
 	}
 }
 
-void testListesEgales(const Liste *liste1, const Liste *liste2) {
+void testListesEgales(const Liste* liste1, const Liste* liste2) {
 	afficher(liste1, FORWARD);
 	printf(" == ");
 	afficher(liste2, FORWARD);
