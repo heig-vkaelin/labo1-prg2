@@ -163,6 +163,7 @@ int main(void) {
 	if (liste5) {
 
 		remplirListeIncrementale(liste5,0, 9);
+		assert(!estVide(liste5));
 
 		printf("Suppression a partir de l'index 5\n");
 		afficher(liste5, FORWARD);
