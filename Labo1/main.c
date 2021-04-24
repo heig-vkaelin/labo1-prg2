@@ -10,7 +10,7 @@
 
  Remarque(s)    : Les tests des fonctions de la librairie ont été séparés en
                   plusieurs étapes. Les tests contenant des asserts sont considérés
-                  valides lorsque "=> TEST PASS" est affiché. Ceux qui n'ont pas
+                  valides lorsque "=> Test reussi" est affiché. Ceux qui n'ont pas
                   ce message ont une indication qu'ils ne contiennent pas d'assert.
 
  Compilateur    : Mingw-w64 gcc 8.1.0
@@ -38,7 +38,7 @@ int main(void) {
 	printf("1. Initilialisation");
 	Liste* listeInit = initialiser();
 	assert(listeInit != NULL);
-	printf("\n=> Test PASS\n");
+	printf("\n=> Test reussi\n");
 
 	// 2. Insertion des éléments à la tête
 	printf("\n2. Insertion des elements a la tete\n");
@@ -58,7 +58,7 @@ int main(void) {
 
 		printf(" => ");
 		afficher(liste1, FORWARD);
-		printf("\n=> Test PASS\n");
+		printf("\n=> Test reussi\n");
 	}
 
 	// 3. Insertion des éléments à la queue
@@ -80,7 +80,7 @@ int main(void) {
 
 		printf(" => ");
 		afficher(liste2, FORWARD);
-		printf("\n=> Test PASS\n");
+		printf("\n=> Test reussi\n");
 	}
 
 	// 4. Suppression des éléments à la tête
@@ -102,7 +102,7 @@ int main(void) {
 
 		assert(supprimerEnTete(liste1, &ancienneTete) == LISTE_VIDE);
 
-		printf(" Derniere valeur supprime = %d\n=> Test PASS\n",
+		printf(" Derniere valeur supprime = %d\n=> Test reussi\n",
 			ancienneTete);
 	}
 
@@ -125,7 +125,7 @@ int main(void) {
 
 		assert(supprimerEnQueue(liste2, &ancienneTete) == LISTE_VIDE);
 
-		printf(" Derniere valeur supprime = %d\n=> Test PASS\n",
+		printf(" Derniere valeur supprime = %d\n=> Test reussi\n",
 			ancienneTete);
 	}
 
@@ -157,7 +157,7 @@ int main(void) {
 		remplirListeIncrementale(liste4, 1, 1);
 		assert(!estVide(liste4));
 
-		printf("\n=> Test PASS\n");
+		printf("\n=> Test reussi\n");
 	}
 
 	// 8. Vidage de liste
@@ -187,7 +187,7 @@ int main(void) {
 		afficher(liste5, FORWARD);
 
 		assert(estVide(liste5));
-		printf("\n=> Test PASS\n");
+		printf("\n=> Test reussi\n");
 	}
 
 	// 9. Vérification d'égalité de liste
@@ -220,7 +220,7 @@ int main(void) {
 		printf(" != ");
 		afficher(liste7, FORWARD);
 
-		printf("\n=> Test PASS\n");
+		printf("\n=> Test reussi\n");
 	}
 
 	// 10. Suppression selon critères
@@ -244,7 +244,7 @@ int main(void) {
 	Liste* liste9= initialiser();
 	if (liste9) {
 
-		// TODO : Régler les flags avec %zu
+		// TODO : Régler les flags avec % zu
 
 		// Longueur de liste vide
 		assert(longueur(liste9) == 0);
@@ -261,7 +261,7 @@ int main(void) {
 		afficher(liste9, FORWARD);
 		printf(" => Taille: %zu", longueur(liste9));
 
-		printf("\n=> Test PASS\n");
+		printf("\n=> Test reussi\n");
 	}
 
 	return EXIT_SUCCESS;
