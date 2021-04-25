@@ -26,12 +26,12 @@
 
 /**
  * Fonction permettant de supprimer de la liste tous les éléments dont la position
- * est impaire et pour lesquels info est compris dans l'intervalle [3, 8]
+ * est impaire et pour lesquels info est compris dans l'intervalle [2, 8]
  * @param position : position dans la liste de l'élément
  * @param info : valeur de l'élément
  * @return true si l'élément doit être supprimé car il correspond aux critères
  */
-bool positionImpaireEtEntre3et8(size_t position, const Info* info);
+bool positionImpaireEtEntre2et8(size_t position, const Info* info);
 
 /**
  * Fonction permettant de faciliter le remplissage de valeurs incrémentales dans
@@ -206,27 +206,23 @@ int main(void) {
 	Liste* liste8Attendue = listes[8];
 	remplirListeIncrementale(liste8, 0, 10);
 
-	// TODO: fix this
-	// Création du résultat attendu : [0, 1, 2, 4, 6, 8, 9, 10]
-//	insererEnTete(liste8Attendue, (const Info*) 0);
-//	insererEnTete(liste8Attendue, (const Info*) 1);
-//	insererEnTete(liste8Attendue, (const Info*) 2);
-//	insererEnTete(liste8Attendue, (const Info*) 4);
-//	insererEnTete(liste8Attendue, (const Info*) 6);
-//	insererEnTete(liste8Attendue, (const Info*) 8);
-//	insererEnTete(liste8Attendue, (const Info*) 9);
-//	insererEnTete(liste8Attendue, (const Info*) 10);
+	// TODO: better way ?
+	// Création du résultat attendu :
+	Info valeursAttendues[7] = {0, 1, 2, 4, 6, 8, 9};
+	for (unsigned i = 0; i < 7; ++i) {
+		insererEnQueue(liste8Attendue, &valeursAttendues[i]);
+	}
 
-	printf("Suppression si position impaire et valeur entre 3 et 8\n");
+	printf("Suppression si position impaire et valeur entre 2 et 8\n");
 	afficher(liste8, FORWARD);
-	supprimerSelonCritere(liste8, positionImpaireEtEntre3et8);
+	supprimerSelonCritere(liste8, positionImpaireEtEntre2et8);
 	printf(" => ");
 	afficher(liste8, FORWARD);
-//	assert(sontEgales(liste8, liste8Attendue));
+	assert(sontEgales(liste8, liste8Attendue));
 	printf("\n=> Test reussi\n");
 
 	// 11. Calcul de la longueur
-	printf("\n\n11. Calcul de la longueur\n");
+	printf("\n11. Calcul de la longueur\n");
 	Liste* liste9 = listes[9];
 
 	// TODO : Régler les flags avec % zu
@@ -254,8 +250,8 @@ int main(void) {
 	return EXIT_SUCCESS;
 }
 
-bool positionImpaireEtEntre3et8(size_t position, const Info* info) {
-	return position % 2 != 0 && *info >= 3 && *info <= 8;
+bool positionImpaireEtEntre2et8(size_t position, const Info* info) {
+	return position % 2 != 0 && *info >= 2 && *info <= 8;
 }
 
 void remplirListeIncrementale(Liste* liste, Info valeurMinimale, size_t nbValeurs) {
