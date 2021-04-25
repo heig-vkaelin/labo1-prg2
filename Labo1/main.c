@@ -209,7 +209,7 @@ int main(void) {
 	// TODO: better way ?
 	// Création du résultat attendu :
 	Info valeursAttendues[7] = {0, 1, 2, 4, 6, 8, 9};
-	for (unsigned i = 0; i < 7; ++i) {
+	for (unsigned i = 0; i < sizeof(valeursAttendues) / sizeof(Info); ++i) {
 		insererEnQueue(liste8Attendue, &valeursAttendues[i]);
 	}
 
