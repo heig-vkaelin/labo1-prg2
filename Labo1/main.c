@@ -22,360 +22,241 @@
 #include <assert.h>
 #include "listes_dynamiques.h"
 
-// Exemple: on souhaite supprimer de la liste tous les éléments dont la position est
-// impaire et pour lesquels info est compris dans un certain intervalle de valeurs
-bool positionEtInfoImpaires(size_t position, const Info* info) {
-	return position % 2 != 0 && *info % 2 != 0;
-}
+#define NB_LISTES 10
 
+/**
+ * Fonction permettant de supprimer de la liste tous les éléments dont la position
+ * est impaire et pour lesquels info est compris dans l'intervalle [3, 8]
+ * @param position : position dans la liste de l'élément
+ * @param info : valeur de l'élément
+ * @return true si l'élément doit être supprimé car il correspond aux critères
+ */
+bool positionImpaireEtEntre3et8(size_t position, const Info* info);
+
+/**
+ * Fonction permettant de faciliter le remplissage de valeurs incrémentales dans
+ * une liste
+ * @param liste : la liste à remplir
+ * @param valeurMinimale : valeur du premier élément à introduire
+ * @param nbValeurs : nombre d'éléments à introduire
+ */
 void remplirListeIncrementale(Liste* liste, Info valeurMinimale, size_t nbValeurs);
 
-void testListesEgales(const Liste* liste1, const Liste* liste2);
-
 int main(void) {
+	Liste* listes[NB_LISTES];
+	const Info INFO_1 = 1;
+	const Info INFO_2 = 2;
+	Info ancienneTete = 0;
+	Info ancienneQueue = 0;
 
-	// 1. Initilialisation
-	printf("1. Initilialisation");
-	Liste* listeInit = initialiser();
-	assert(listeInit != NULL);
+	// 1. Initialisation
+	printf("1. Initialisation");
+	for (int i = 0; i < NB_LISTES; ++i) {
+		listes[i] = initialiser();
+		assert(listes[i] != NULL);
+	}
 	printf("\n=> Test reussi\n");
 
 	// 2. Insertion des éléments à la tête
 	printf("\n2. Insertion des elements a la tete\n");
-	Liste* liste1 = initialiser();
-	if (liste1) {
-		const Info INFO_1 = 1;
-		const Info INFO_2 = 2;
+	Liste* liste1 = listes[0];
+	afficher(liste1, FORWARD);
 
-		afficher(liste1, FORWARD);
+	assert(insererEnTete(liste1, &INFO_1) == OK);
+	printf(" => ");
+	afficher(liste1, FORWARD);
 
-		assert(insererEnTete(liste1, &INFO_1) == OK);
-
-		printf(" => ");
-		afficher(liste1, FORWARD);
-
-		assert(insererEnTete(liste1, &INFO_2) == OK);
-
-		printf(" => ");
-		afficher(liste1, FORWARD);
-		printf("\n=> Test reussi\n");
-	}
+	assert(insererEnTete(liste1, &INFO_2) == OK);
+	printf(" => ");
+	afficher(liste1, FORWARD);
+	printf("\n=> Test reussi\n");
 
 	// 3. Insertion des éléments à la queue
 	printf("\n3. Insertion des elements a la queue\n");
-	Liste* liste2 = initialiser();
-	if (liste2) {
-		const Info INFO_1 = 1;
-		const Info INFO_2 = 2;
+	Liste* liste2 = listes[1];
+	afficher(liste2, FORWARD);
 
-		afficher(liste2, FORWARD);
+	// Insertion dans liste vide
+	assert(insererEnQueue(liste2, &INFO_1) == OK);
+	printf(" => ");
+	afficher(liste2, FORWARD);
 
-		// Insertion de liste vide
-		assert(insererEnQueue(liste2, &INFO_1) == OK);
-
-		printf(" => ");
-		afficher(liste2, FORWARD);
-
-		assert(insererEnQueue(liste2, &INFO_2) == OK);
-
-		printf(" => ");
-		afficher(liste2, FORWARD);
-		printf("\n=> Test reussi\n");
-	}
+	assert(insererEnQueue(liste2, &INFO_2) == OK);
+	printf(" => ");
+	afficher(liste2, FORWARD);
+	printf("\n=> Test reussi\n");
 
 	// 4. Suppression des éléments à la tête
 	printf("\n4. Suppression des elements a la tete\n");
-	if (liste1) {
-		Info ancienneTete = 0;
+	afficher(liste1, FORWARD);
 
-		afficher(liste1, FORWARD);
+	assert(supprimerEnTete(liste1, &ancienneTete) == OK);
+	printf(" => ");
+	afficher(liste1, FORWARD);
 
-		assert(supprimerEnTete(liste1, &ancienneTete) == OK);
+	assert(supprimerEnTete(liste1, &ancienneTete) == OK);
+	printf(" => ");
+	afficher(liste1, FORWARD);
 
-		printf(" => ");
-		afficher(liste1, FORWARD);
-
-		assert(supprimerEnTete(liste1, &ancienneTete) == OK);
-
-		printf(" => ");
-		afficher(liste1, FORWARD);
-
-		assert(supprimerEnTete(liste1, &ancienneTete) == LISTE_VIDE);
-
-		printf(" Derniere valeur supprime = %d\n=> Test reussi\n",
-			ancienneTete);
-	}
+	assert(supprimerEnTete(liste1, &ancienneTete) == LISTE_VIDE);
+	printf(" Derniere valeur supprime = %d\n=> Test reussi\n",
+			 ancienneTete);
 
 	// 5. Suppression des éléments à la queue
 	printf("\n5. Suppression des elements a la queue\n");
-	if (liste2) {
-		Info ancienneTete = 0;
+	afficher(liste2, FORWARD);
 
-		afficher(liste2, FORWARD);
+	assert(supprimerEnQueue(liste2, &ancienneQueue) == OK);
+	printf(" => ");
+	afficher(liste2, FORWARD);
 
-		assert(supprimerEnQueue(liste2, &ancienneTete) == OK);
+	assert(supprimerEnQueue(liste2, &ancienneQueue) == OK);
+	printf(" => ");
+	afficher(liste2, FORWARD);
 
-		printf(" => ");
-		afficher(liste2, FORWARD);
-
-		assert(supprimerEnQueue(liste2, &ancienneTete) == OK);
-
-		printf(" => ");
-		afficher(liste2, FORWARD);
-
-		assert(supprimerEnQueue(liste2, &ancienneTete) == LISTE_VIDE);
-
-		printf(" Derniere valeur supprime = %d\n=> Test reussi\n",
-			ancienneTete);
-	}
+	assert(supprimerEnQueue(liste2, &ancienneQueue) == LISTE_VIDE);
+	printf(" Derniere valeur supprime = %d\n=> Test reussi\n",
+			 ancienneQueue);
 
 	// 6. Affichage de liste avec mode
 	printf("\n6. Affichage de liste avec mode (Pas d'assert)\n");
-	Liste* liste3 = initialiser();
-	if (liste3) {
-		printf("Liste vide: ");
-		afficher(liste3, FORWARD);
+	Liste* liste3 = listes[2];
+	printf("Liste vide: ");
+	afficher(liste3, FORWARD);
 
-		remplirListeIncrementale(liste3, 1, 1);
-		printf("\nListe d'un element: ");
-		afficher(liste3, FORWARD);
+	remplirListeIncrementale(liste3, 1, 1);
+	printf("\nListe d'un element: ");
+	afficher(liste3, FORWARD);
 
-		remplirListeIncrementale(liste3, 2, 3);
-		printf("\nListe remplie en mode FORWARD:\t");
-		afficher(liste3, FORWARD);
+	remplirListeIncrementale(liste3, 2, 3);
+	printf("\nListe remplie en mode FORWARD:\t");
+	afficher(liste3, FORWARD);
 
-		printf("\nListe remplie en mode BACKWARD:\t");
-		afficher(liste3, BACKWARD);
-	}
+	printf("\nListe remplie en mode BACKWARD:\t");
+	afficher(liste3, BACKWARD);
 
 	// 7. Vérification de liste vide
 	printf("\n\n7. Verification de liste vide");
-	Liste* liste4 = initialiser();
-	if (liste4) {
-
-		assert(estVide(liste4));
-		remplirListeIncrementale(liste4, 1, 1);
-		assert(!estVide(liste4));
-
-		printf("\n=> Test reussi\n");
-	}
+	Liste* liste4 = listes[3];
+	assert(estVide(liste4));
+	remplirListeIncrementale(liste4, 1, 1);
+	assert(!estVide(liste4));
+	printf("\n=> Test reussi\n");
 
 	// 8. Vidage de liste
 	printf("\n8. Vidage de liste\n");
-	Liste* liste5 = initialiser();
-	if (liste5) {
+	Liste* liste5 = listes[4];
+	remplirListeIncrementale(liste5, 0, 9);
+	assert(!estVide(liste5));
 
-		remplirListeIncrementale(liste5,0, 9);
-		assert(!estVide(liste5));
+	printf("Suppression a partir de l'index 5\n");
+	afficher(liste5, FORWARD);
+	vider(liste5, 5);
+	printf(" => ");
+	afficher(liste5, FORWARD);
 
-		printf("Suppression a partir de l'index 5\n");
-		afficher(liste5, FORWARD);
-		vider(liste5, 5);
-		printf(" => ");
-		afficher(liste5, FORWARD);
+	printf("\nSuppression totale\n");
+	afficher(liste5, FORWARD);
+	vider(liste5, 0);
+	printf(" => ");
+	afficher(liste5, FORWARD);
 
-		printf("\nSuppression totale\n");
-		afficher(liste5, FORWARD);
-		vider(liste5, 0);
-		printf(" => ");
-		afficher(liste5, FORWARD);
+	printf("\nTentative de suppression d'une liste vide\n");
+	afficher(liste5, FORWARD);
+	vider(liste5, 0);
+	printf(" => ");
+	afficher(liste5, FORWARD);
 
-		printf("\nTentative de suppression d'une liste vide\n");
-		afficher(liste5, FORWARD);
-		vider(liste5, 0);
-		printf(" => ");
-		afficher(liste5, FORWARD);
-
-		assert(estVide(liste5));
-		printf("\n=> Test reussi\n");
-	}
+	assert(estVide(liste5));
+	printf("\n=> Test reussi\n");
 
 	// 9. Vérification d'égalité de liste
 	printf("\n9. Verification d'egalite de liste\n");
-	Liste* liste6 = initialiser();
-	Liste* liste7 = initialiser();
+	Liste* liste6 = listes[5];
+	Liste* liste7 = listes[6];
 
-	if (liste6 && liste7) {
+	// Listes vides
+	assert(sontEgales(liste6, liste7));
+	afficher(liste6, FORWARD);
+	printf(" = ");
+	afficher(liste7, FORWARD);
 
-		// Listes vides
-		assert(sontEgales(liste6, liste7));
-		afficher(liste6, FORWARD);
-		printf(" = ");
-		afficher(liste7, FORWARD);
+	// Listes remplies & égales
+	remplirListeIncrementale(liste6, 1, 4);
+	remplirListeIncrementale(liste7, 1, 4);
+	assert(sontEgales(liste6, liste7));
+	printf("\n");
+	afficher(liste6, FORWARD);
+	printf(" = ");
+	afficher(liste7, FORWARD);
 
-		// Listes remplies & égales
-		remplirListeIncrementale(liste6, 1, 4);
-		remplirListeIncrementale(liste7, 1, 4);
-		assert(sontEgales(liste6, liste7));
-		printf("\n");
-		afficher(liste6, FORWARD);
-		printf(" = ");
-		afficher(liste7, FORWARD);
+	// Listes remplies & inégales
+	remplirListeIncrementale(liste6, 5, 1);
+	assert(!sontEgales(liste6, liste7));
+	printf("\n");
+	afficher(liste6, FORWARD);
+	printf(" != ");
+	afficher(liste7, FORWARD);
 
-		// Listes remplies & inégales
-		remplirListeIncrementale(liste6, 5, 1);
-		assert(!sontEgales(liste6, liste7));
-		printf("\n");
-		afficher(liste6, FORWARD);
-		printf(" != ");
-		afficher(liste7, FORWARD);
-
-		printf("\n=> Test reussi\n");
-	}
+	printf("\n=> Test reussi\n");
 
 	// 10. Suppression selon critères
-	printf("\n10. Suppression selon criteres (Pas d'assert)\n");
-	Liste* liste8 = initialiser();
-	if (liste8) {
-		remplirListeIncrementale(liste8, 0, 15);
+	printf("\n10. Suppression selon criteres\n");
+	Liste* liste8 = listes[7];
+	Liste* liste8Attendue = listes[8];
+	remplirListeIncrementale(liste8, 0, 10);
 
-		// TODO
+	// TODO: fix this
+	// Création du résultat attendu : [0, 1, 2, 4, 6, 8, 9, 10]
+//	insererEnTete(liste8Attendue, (const Info*) 0);
+//	insererEnTete(liste8Attendue, (const Info*) 1);
+//	insererEnTete(liste8Attendue, (const Info*) 2);
+//	insererEnTete(liste8Attendue, (const Info*) 4);
+//	insererEnTete(liste8Attendue, (const Info*) 6);
+//	insererEnTete(liste8Attendue, (const Info*) 8);
+//	insererEnTete(liste8Attendue, (const Info*) 9);
+//	insererEnTete(liste8Attendue, (const Info*) 10);
 
-		printf("Suppression si valeur impaire\n");
-		afficher(liste8, FORWARD);
-		supprimerSelonCritere(liste8, positionEtInfoImpaires);
-		printf(" => ");
-		afficher(liste8, FORWARD);
-
-	}
+	printf("Suppression si position impaire et valeur entre 3 et 8\n");
+	afficher(liste8, FORWARD);
+	supprimerSelonCritere(liste8, positionImpaireEtEntre3et8);
+	printf(" => ");
+	afficher(liste8, FORWARD);
+//	assert(sontEgales(liste8, liste8Attendue));
+	printf("\n=> Test reussi\n");
 
 	// 11. Calcul de la longueur
 	printf("\n\n11. Calcul de la longueur\n");
-	Liste* liste9= initialiser();
-	if (liste9) {
+	Liste* liste9 = listes[9];
 
-		// TODO : Régler les flags avec % zu
+	// TODO : Régler les flags avec % zu
+	// Longueur de liste vide
+	assert(longueur(liste9) == 0);
+	printf("Longueur de liste vide\n");
+	afficher(liste9, FORWARD);
+	printf(" => Taille: %zu\n", longueur(liste9));
 
-		// Longueur de liste vide
-		assert(longueur(liste9) == 0);
+	// Longueur de liste remplie
+	remplirListeIncrementale(liste9, 1, 4);
+	assert(longueur(liste9) == 4);
+	printf("Longueur de liste remplie\n");
+	afficher(liste9, FORWARD);
+	printf(" => Taille: %zu", longueur(liste9));
+	printf("\n=> Test reussi\n");
 
-		printf("Longueur de liste vide\n");
-		afficher(liste9, FORWARD);
-		printf(" => Taille: %zu\n", longueur(liste9));
-
-		// Longueur de liste remplie
-		remplirListeIncrementale(liste9, 1, 4);
-		assert(longueur(liste9) == 4);
-
-		printf("Longueur de liste remplie\n");
-		afficher(liste9, FORWARD);
-		printf(" => Taille: %zu", longueur(liste9));
-
-		printf("\n=> Test reussi\n");
+	// Libération de la mémoire
+	for (int i = 0; i < NB_LISTES; ++i) {
+		vider(listes[i], 0);
+		free(listes[i]);
+		listes[i] = NULL;
 	}
 
 	return EXIT_SUCCESS;
 }
 
-//int main(void) {
-//	// 1. Initialiser
-//	Liste* liste1 = initialiser();
-//	Liste* liste2 = initialiser();
-//
-//	// 2. Ajouter des éléments à la tête
-//	const Info INFO_1 = 1;
-//	const Info INFO_2 = 2;
-//	const Info INFO_3 = 3;
-//	insererEnTete(liste1, &INFO_1);
-//	insererEnTete(liste1, &INFO_2);
-//	insererEnTete(liste1, &INFO_3);
-//	insererEnQueue(liste1, &INFO_2);
-//
-//	printf("Longueur liste1: %zu\n", longueur(liste1));
-//	printf("Longueur liste2: %zu\n", longueur(liste2));
-//
-//	afficher(liste1, FORWARD);
-//	printf("\n");
-//	afficher(liste1, BACKWARD);
-//	printf("\n");
-//
-//	// 3. Supprimer des éléments à la tête
-//	Info ancienneTete = 0;
-//	supprimerEnTete(liste1, &ancienneTete);
-//	printf("Valeur element supprime: %d\n", ancienneTete);
-//	supprimerEnTete(liste1, &ancienneTete);
-//	printf("Valeur element supprime: %d\n", ancienneTete);
-//	supprimerEnTete(liste1, &ancienneTete);
-//	printf("Valeur element supprime: %d\n", ancienneTete);
-//	supprimerEnTete(liste1, &ancienneTete);
-//	printf("Valeur element supprime: %d\n", ancienneTete);
-//	supprimerEnTete(liste1, &ancienneTete);
-//	printf("Valeur element supprime: %d\n", ancienneTete);
-//	afficher(liste1, FORWARD);
-//	printf("\n");
-//
-//	// 4. Supprimer des éléments à la queue
-//	insererEnTete(liste2, &INFO_1);
-//	insererEnTete(liste2, &INFO_2);
-//	insererEnTete(liste2, &INFO_3);
-//	Info ancienneQueue = 0;
-//
-//	afficher(liste2, FORWARD);
-//	printf("\n");
-//	supprimerEnQueue(liste2, &ancienneQueue);
-//	printf("Valeur element supprime: %d\n", ancienneQueue);
-//	supprimerEnQueue(liste2, &ancienneQueue);
-//	printf("Valeur element supprime: %d\n", ancienneQueue);
-//	supprimerEnQueue(liste2, &ancienneQueue);
-//	printf("Valeur element supprime: %d\n", ancienneQueue);
-//	supprimerEnQueue(liste2, &ancienneQueue);
-//	printf("Valeur element supprime: %d\n", ancienneQueue);
-//	supprimerEnQueue(liste2, &ancienneQueue);
-//	printf("Valeur element supprime: %d\n", ancienneQueue);
-//	afficher(liste2, FORWARD);
-//	printf("\n");
-//
-//	// 5. Vider une liste
-//	printf("\n5. Vider une liste\n");
-//	insererEnTete(liste2, &INFO_1);
-//	insererEnTete(liste2, &INFO_2);
-//	insererEnTete(liste2, &INFO_3);
-//	afficher(liste2, FORWARD);
-//	printf("\n");
-//	vider(liste2, 0);
-//	afficher(liste2, FORWARD);
-//	printf("\n\n");
-//
-//	// 6. Supprimer selon critères
-//	printf("6. Supprimer selon critères\n");
-//	vider(liste1, 0);
-//	remplirListeIncrementale(liste1, 0, 15);
-//	afficher(liste1, FORWARD);
-//	printf("\n");
-//	supprimerSelonCritere(liste1, positionEtInfoImpaires);
-//	afficher(liste1, FORWARD);
-//	printf("\n");
-//
-//	// Liste vide
-//	vider(liste1, 0);
-//	afficher(liste1, FORWARD);
-//	printf("\n");
-//	supprimerSelonCritere(liste1, positionEtInfoImpaires);
-//	afficher(liste1, FORWARD);
-//	printf("\n\n");
-//
-//	// Liste d'un élément
-//	vider(liste1, 0);
-//	remplirListeIncrementale(liste1, 1, 2);
-//	afficher(liste1, FORWARD);
-//	printf("\n");
-//	supprimerSelonCritere(liste1, positionEtInfoImpaires);
-//	afficher(liste1, FORWARD);
-//	printf("\n\n");
-//
-//	// 7. Listes égales
-//	printf("7. Liste égales\n");
-//	testListesEgales(liste1, liste2);
-//	remplirListeIncrementale(liste1, 0, 5);
-//	testListesEgales(liste1, liste2);
-//	remplirListeIncrementale(liste2, 0, 5);
-//	testListesEgales(liste1, liste2);
-//	vider(liste2, 0);
-//	remplirListeIncrementale(liste2, 2, 5);
-//	testListesEgales(liste1, liste2);
-//
-//	return EXIT_SUCCESS;
-//}
+bool positionImpaireEtEntre3et8(size_t position, const Info* info) {
+	return position % 2 != 0 && *info >= 3 && *info <= 8;
+}
 
 void remplirListeIncrementale(Liste* liste, Info valeurMinimale, size_t nbValeurs) {
 	Info valeur = valeurMinimale;
@@ -384,15 +265,3 @@ void remplirListeIncrementale(Liste* liste, Info valeurMinimale, size_t nbValeur
 		++valeur;
 	}
 }
-
-//void testListesEgales(const Liste* liste1, const Liste* liste2) {
-//	afficher(liste1, FORWARD);
-//	printf(" == ");
-//	afficher(liste2, FORWARD);
-//	printf(" ? ");
-//	if (sontEgales(liste1, liste2)) {
-//		printf("true\n");
-//	} else {
-//		printf("false\n");
-//	}
-//}

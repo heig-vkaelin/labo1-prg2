@@ -166,6 +166,7 @@ void supprimerSelonCritere(Liste* liste, bool (* critere)(size_t, const Info*)) 
 				liste->queue = element->precedent;
 			}
 			free(element);
+			element = NULL;
 		}
 		++pos;
 		element = tempSuivant;
