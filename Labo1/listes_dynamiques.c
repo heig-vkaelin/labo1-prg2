@@ -9,6 +9,7 @@
 
  Remarque(s)    : Utilisation de calloc à la place de malloc pour que les champs
                   des structures soient automatiquement initialisés à NULL.
+
                   La vérification de la bonne initialisation de la liste est à la
                   charge du développeur. Un pointeur NULL est renvoyé en cas
                   d'erreur lors de l'allocation mémoire.

@@ -19,6 +19,10 @@
                   sur les différentes plateformes. Son implémentation est basée
                   sur la correction de l'exercice 1.11.
 
+                  Les paramètres de fonctions de suppressions par critères ne sont
+                  pas forcément tous utilisés, ce qui peut provoquer un warning
+                  Wunused-parameter.
+
  Compilateur    : Mingw-w64 gcc 8.1.0
  -----------------------------------------------------------------------------------
 */
@@ -26,15 +30,24 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <stdbool.h>
 #include <inttypes.h>
 #include "listes_dynamiques.h"
 
-#define NB_LISTES 2
-
 /**
  * Affiche un nombre non-signé dans la console
+ * Levée d'un Warning Wformat possible selon l'OS
  */
 #define PRINT_UNSIGNED(i) printf(#i " = %" PRIuMAX "\n", (uintmax_t) (i))
+
+/**
+ * Fonction permettant de faciliter le remplissage de valeurs incrémentales dans
+ * une liste
+ * @param liste : la liste à remplir
+ * @param valeurMinimale : valeur du premier élément à introduire
+ * @param nbValeurs : nombre d'éléments à introduire
+ */
+void remplirListeIncrementale(Liste* liste, Info valeurMinimale, size_t nbValeurs);
 
 /**
  * Fonction permettant de supprimer de la liste tous les éléments dont la position
@@ -46,13 +59,13 @@
 bool positionImpaireEtEntre2et8(size_t position, const Info* info);
 
 /**
- * Fonction permettant de faciliter le remplissage de valeurs incrémentales dans
- * une liste
- * @param liste : la liste à remplir
- * @param valeurMinimale : valeur du premier élément à introduire
- * @param nbValeurs : nombre d'éléments à introduire
+ * Fonction permettant de supprimer de la liste tous les éléments dont l'info est
+ * plus grande que 3.
+ * @param position : position dans la liste de l'élément
+ * @param info : valeur de l'élément
+ * @return true si l'élément doit être supprimé car il correspond aux critères
  */
-void remplirListeIncrementale(Liste* liste, Info valeurMinimale, size_t nbValeurs);
+bool infoPlusGrandQue3(size_t position, const Info* info);
 
 int main(void) {
 	const Info INFO_1 = 1;
@@ -72,7 +85,9 @@ int main(void) {
 	assert(liste2->queue == NULL);
 	printf("\n=> Test reussi\n\n");
 
+	// ************************************************
 	// TEST: Insertion des éléments à la tête
+	// ************************************************
 	printf("TEST: Insertion des elements a la tete\n");
 	afficher(liste1, FORWARD);
 
@@ -89,7 +104,9 @@ int main(void) {
 	afficher(liste1, FORWARD);
 	printf("\n=> Test reussi\n\n");
 
+	// ************************************************
 	// TEST: Insertion des éléments à la queue
+	// ************************************************
 	printf("TEST: Insertion des elements a la queue\n");
 	afficher(liste2, FORWARD);
 
@@ -107,7 +124,9 @@ int main(void) {
 	afficher(liste2, FORWARD);
 	printf("\n=> Test reussi\n\n");
 
+	// ************************************************
 	// TEST: Vérification de liste vide
+	// ************************************************
 	printf("TEST: Verification de liste vide");
 	Liste* liste3 = initialiser();
 	assert(estVide(liste3));
@@ -115,7 +134,9 @@ int main(void) {
 	assert(!estVide(liste3));
 	printf("\n=> Test reussi\n\n");
 
+	// ************************************************
 	// TEST: Vidage de liste
+	// ************************************************
 	printf("TEST: Vidage de liste\n");
 	remplirListeIncrementale(liste1, 3, 6);
 	assert(!estVide(liste1));
@@ -134,15 +155,28 @@ int main(void) {
 	afficher(liste1, FORWARD);
 	assert(estVide(liste1));
 
-	printf("\nTentative de suppression d'une liste vide\n");
+	printf("\nTentative de suppression dans une liste vide\n");
 	afficher(liste1, FORWARD);
 	vider(liste1, 0);
 	printf(" => ");
 	afficher(liste1, FORWARD);
 	assert(estVide(liste1));
+
+	printf("\nTentative de suppression avec index incorrect 6\n");
+	vider(liste1, 0);
+	vider(liste2, 0);
+	remplirListeIncrementale(liste1, 1, 5);
+	remplirListeIncrementale(liste2, 1, 5);
+	afficher(liste1, FORWARD);
+	vider(liste1, 6);
+	printf(" => ");
+	afficher(liste1, FORWARD);
+	assert(sontEgales(liste1, liste2));
 	printf("\n=> Test reussi\n\n");
 
+	// ************************************************
 	// TEST: Calcul de la longueur
+	// ************************************************
 	printf("TEST: Calcul de la longueur\n");
 	vider(liste1, 0);
 
@@ -162,7 +196,9 @@ int main(void) {
 	PRINT_UNSIGNED(longueur(liste1));
 	printf("=> Test reussi\n");
 
+	// ************************************************
 	// TEST: Suppression des éléments à la tête
+	// ************************************************
 	printf("TEST: Suppression des elements a la tete\n");
 	vider(liste1, 0);
 	insererEnTete(liste1, &INFO_1);
@@ -181,10 +217,11 @@ int main(void) {
 
 	assert(supprimerEnTete(liste1, &ancienneTete) == LISTE_VIDE);
 	assert(ancienneTete == INFO_1);
-	printf(" Derniere valeur supprime = %d\n=> Test reussi\n\n",
-			 ancienneTete);
+	printf(" Derniere valeur supprime = %d\n=> Test reussi\n\n", ancienneTete);
 
+	// ************************************************
 	// TEST: Suppression des éléments à la queue
+	// ************************************************
 	printf("TEST: Suppression des elements a la queue\n");
 	vider(liste1, 0);
 	insererEnTete(liste1, &INFO_1);
@@ -203,10 +240,11 @@ int main(void) {
 
 	assert(supprimerEnQueue(liste1, &ancienneQueue) == LISTE_VIDE);
 	assert(ancienneQueue == INFO_2);
-	printf(" Derniere valeur supprime = %d\n=> Test reussi\n\n",
-			 ancienneQueue);
+	printf(" Derniere valeur supprime = %d\n=> Test reussi\n\n", ancienneQueue);
 
+	// ************************************************
 	// TEST: Affichage de liste avec mode (Pas d'assert)
+	// ************************************************
 	printf("TEST: Affichage de liste avec mode (Pas d'assert)\n");
 	vider(liste1, 0);
 	printf("Liste vide: ");
@@ -224,7 +262,9 @@ int main(void) {
 	afficher(liste1, BACKWARD);
 	printf("\n\n");
 
+	// ************************************************
 	// TEST: Vérification d'égalité de liste
+	// ************************************************
 	printf("TEST: Verification d'egalite de liste\n");
 	vider(liste1, 0);
 	vider(liste2, 0);
@@ -244,8 +284,19 @@ int main(void) {
 	printf(" = ");
 	afficher(liste2, FORWARD);
 
-	// Listes remplies & inégales
+	// Listes remplies & inégales (tailles différentes)
 	remplirListeIncrementale(liste1, 5, 1);
+	assert(!sontEgales(liste1, liste2));
+	printf("\n");
+	afficher(liste1, FORWARD);
+	printf(" != ");
+	afficher(liste2, FORWARD);
+
+	// Listes remplies & inégales (mêmes tailles)
+	vider(liste1, 0);
+	vider(liste2, 0);
+	remplirListeIncrementale(liste1, 1, 5);
+	remplirListeIncrementale(liste2, 2, 5);
 	assert(!sontEgales(liste1, liste2));
 	printf("\n");
 	afficher(liste1, FORWARD);
@@ -254,14 +305,14 @@ int main(void) {
 
 	printf("\n=> Test reussi\n\n");
 
+	// ************************************************
 	// TEST: Suppression selon critères
+	// ************************************************
 	printf("TEST: Suppression selon criteres\n");
 	vider(liste1, 0);
 	vider(liste2, 0);
 	remplirListeIncrementale(liste1, 0, 10);
 
-	// TODO: better way ?
-	// Création du résultat attendu :
 	Info valeursAttendues[7] = {0, 1, 2, 4, 6, 8, 9};
 	for (unsigned i = 0; i < sizeof(valeursAttendues) / sizeof(Info); ++i) {
 		insererEnQueue(liste2, &valeursAttendues[i]);
@@ -272,6 +323,38 @@ int main(void) {
 	supprimerSelonCritere(liste1, positionImpaireEtEntre2et8);
 	printf(" => ");
 	afficher(liste1, FORWARD);
+	assert(sontEgales(liste1, liste2));
+
+	printf("\nTentative de suppression si valeur > 3\n");
+	vider(liste1, 0);
+	vider(liste2, 0);
+	remplirListeIncrementale(liste1, 1, 1);
+	remplirListeIncrementale(liste2, 1, 1);
+	afficher(liste1, FORWARD);
+	supprimerSelonCritere(liste1, infoPlusGrandQue3);
+	printf(" => ");
+	afficher(liste1, FORWARD);
+	assert(sontEgales(liste1, liste2));
+
+	printf("\nTentative de suppression si valeur > 3\n");
+	vider(liste1, 0);
+	vider(liste2, 0);
+	afficher(liste1, FORWARD);
+	supprimerSelonCritere(liste1, infoPlusGrandQue3);
+	printf(" => ");
+	afficher(liste1, FORWARD);
+	assert(estVide(liste1));
+	assert(sontEgales(liste1, liste2));
+
+	printf("\nSuppression si valeur > 3\n");
+	vider(liste1, 0);
+	vider(liste2, 0);
+	remplirListeIncrementale(liste1, 5, 1);
+	afficher(liste1, FORWARD);
+	supprimerSelonCritere(liste1, infoPlusGrandQue3);
+	printf(" => ");
+	afficher(liste1, FORWARD);
+	assert(estVide(liste1));
 	assert(sontEgales(liste1, liste2));
 	printf("\n=> Test reussi\n");
 
@@ -291,14 +374,19 @@ int main(void) {
 	return EXIT_SUCCESS;
 }
 
-bool positionImpaireEtEntre2et8(size_t position, const Info* info) {
-	return position % 2 != 0 && *info >= 2 && *info <= 8;
-}
-
 void remplirListeIncrementale(Liste* liste, Info valeurMinimale, size_t nbValeurs) {
 	Info valeur = valeurMinimale;
 	for (size_t i = 0; i < nbValeurs; ++i) {
 		insererEnQueue(liste, &valeur);
 		++valeur;
 	}
+}
+
+bool positionImpaireEtEntre2et8(size_t position, const Info* info) {
+	return position % 2 != 0 && *info >= 2 && *info <= 8;
+}
+
+// Levée d'un Warning Wunused-parameter prévue
+bool infoPlusGrandQue3(size_t position, const Info* info) {
+	return *info > 3;
 }
