@@ -194,15 +194,15 @@ int main(void) {
 	afficher(liste1, FORWARD);
 	printf(" => Taille: ");
 	PRINT_UNSIGNED(longueur(liste1));
-	printf("=> Test reussi\n");
+	printf("=> Test reussi\n\n");
 
 	// ************************************************
 	// TEST: Suppression des éléments à la tête
 	// ************************************************
 	printf("TEST: Suppression des elements a la tete\n");
 	vider(liste1, 0);
-	insererEnTete(liste1, &INFO_1);
-	insererEnTete(liste1, &INFO_2);
+	assert(insererEnTete(liste1, &INFO_1) == OK);
+	assert(insererEnTete(liste1, &INFO_2) == OK);
 	afficher(liste1, FORWARD);
 
 	assert(supprimerEnTete(liste1, &ancienneTete) == OK);
@@ -224,8 +224,8 @@ int main(void) {
 	// ************************************************
 	printf("TEST: Suppression des elements a la queue\n");
 	vider(liste1, 0);
-	insererEnTete(liste1, &INFO_1);
-	insererEnTete(liste1, &INFO_2);
+	assert(insererEnTete(liste1, &INFO_1) == OK);
+	assert(insererEnTete(liste1, &INFO_2) == OK);
 	afficher(liste1, FORWARD);
 
 	assert(supprimerEnQueue(liste1, &ancienneQueue) == OK);
@@ -315,7 +315,7 @@ int main(void) {
 
 	Info valeursAttendues[7] = {0, 1, 2, 4, 6, 8, 9};
 	for (unsigned i = 0; i < sizeof(valeursAttendues) / sizeof(Info); ++i) {
-		insererEnQueue(liste2, &valeursAttendues[i]);
+		assert(insererEnQueue(liste2, &valeursAttendues[i]) == OK);
 	}
 
 	printf("Suppression si position impaire et valeur entre 2 et 8\n");
@@ -377,7 +377,7 @@ int main(void) {
 void remplirListeIncrementale(Liste* liste, Info valeurMinimale, size_t nbValeurs) {
 	Info valeur = valeurMinimale;
 	for (size_t i = 0; i < nbValeurs; ++i) {
-		insererEnQueue(liste, &valeur);
+		assert(insererEnQueue(liste, &valeur) == OK);
 		++valeur;
 	}
 }
